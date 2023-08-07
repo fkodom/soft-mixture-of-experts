@@ -52,13 +52,13 @@ import torch
 
 from soft_mixture_of_experts.soft_moe import SoftMoE
 
-device = "cuda"
 # SoftMoE with 32 experts, 2 slots per expert (64 total):
 moe = SoftMoE(
     embed_dim=512,
     num_experts=32,
     slots_per_expert=2,
     bias=False,  # optional, default: True
+    device="cuda",  # optional, default: None
 )
 # input shape: (batch_size, seq_len, embed_dim)
 x = torch.randn(2, 128, 512, device="cuda")
