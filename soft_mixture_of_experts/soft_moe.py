@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 import math
-from typing import Callable, Optional, Sequence, Union
+from typing import Optional, Union
 
 import torch
-import torch.nn.functional as F
 from einops import einsum, rearrange
 from torch import Tensor, nn
-
-ExpertFunction = Callable[[Tensor], Tensor]
 
 
 class MultiExpertLayer(nn.Module):

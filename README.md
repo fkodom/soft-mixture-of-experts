@@ -14,8 +14,8 @@ PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtu
     - [ ] language model
     - [ ] vision transformer
 - [ ] Reproduce benchmarks from paper
-    - [ ] ViT eval step (Tables 1,2)
-    - [ ] ViT training step ()
+    - [ ] ViT inference time (Tables 1, 2)
+    - [ ] ViT training step time??? (Figure 7)
 - [ ] Release on PyPI
     - [ ] Prerelease
     - [ ] Stable
