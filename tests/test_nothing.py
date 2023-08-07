@@ -1,5 +1,5 @@
-import {{REPO_NAME_SNAKECASE}}
+import soft_mixture_of_experts
 
 
 def test_nothing():
-    print({{REPO_NAME_SNAKECASE}})
+    print(soft_mixture_of_experts)

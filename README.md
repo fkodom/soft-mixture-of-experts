@@ -1,13 +1,13 @@
-# {{REPO_NAME}}
+# soft-mixture-of-experts
 
 
 ## Install
 
 ```bash
-pip install "{{REPO_NAME}} @ git+ssh://git@github.com/{{REPO_OWNER}}/{{REPO_NAME}}.git"
+pip install "soft-mixture-of-experts @ git+ssh://git@github.com/fkodom/soft-mixture-of-experts.git"
 
 # Install all dev dependencies (tests etc.)
-pip install "{{REPO_NAME}}[test] @ git+ssh://git@github.com/{{REPO_OWNER}}/{{REPO_NAME}}.git"
+pip install "soft-mixture-of-experts[test] @ git+ssh://git@github.com/fkodom/soft-mixture-of-experts.git"
 
 # Setup pre-commit hooks
 pre-commit install

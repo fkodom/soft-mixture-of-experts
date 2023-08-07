@@ -1,5 +1,5 @@
 [run]
-source = {{REPO_NAME_SNAKECASE}}
+source = soft_mixture_of_experts
 
 [report]
 exclude_lines =
