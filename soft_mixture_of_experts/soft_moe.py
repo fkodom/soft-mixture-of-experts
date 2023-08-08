@@ -45,7 +45,6 @@ class SoftMoE(nn.Module):
         self.slots_per_expert = slots_per_expert
         self.bias = bias
 
-        # TODO: Check for initialization strategy from the paper
         self.phi = nn.Parameter(
             torch.empty(
                 (embed_dim, num_experts, slots_per_expert),
@@ -60,6 +59,8 @@ class SoftMoE(nn.Module):
             device=device,
             dtype=dtype,
         )
+
+        self.reset_parameters()
 
     def reset_parameters(self) -> None:
         # NOTE: Copy weight initialization from 'nn.Linear.reset_parameters'
@@ -90,6 +91,8 @@ class SoftMoE(nn.Module):
                 f"Expected x.size(-1)={x.size(-1)} to match embed_dim={self.embed_dim}, "
                 f"but got {x.size(-1)}."
             )
+        elif x.ndim != 3:
+            raise ValueError(f"Expected input to have 3 dimensions, but got {x.ndim}.")
 
         logits = einsum(x, self.phi, "b m d, d n p -> b m n p")
         dispatch_weights = logits.softmax(dim=0)  # denoted 'D' in the paper
@@ -99,7 +102,7 @@ class SoftMoE(nn.Module):
         combine_weights = rearrange(
             logits.flatten(start_dim=2).softmax(dim=-1),
             "b m (n p) -> b m n p",
-            n=num_experts,
+            n=self.num_experts,
         )
 
         # NOTE: To save memory, I don't rename the intermediate tensors Y, Ys, Xs.
@@ -116,29 +119,3 @@ class SoftMoE(nn.Module):
             f"embed_dim={self.embed_dim}, num_experts={self.num_experts}, "
             f"slots_per_expert={self.slots_per_expert}, bias={self.bias}"
         )
-
-
-if __name__ == "__main__":
-    # testing/debugging
-    # TODO: convert to unit tests
-
-    batch_size = 2
-    seq_len = 16
-    embed_dim = 2048
-    num_experts = 32
-    slots_per_expert = 2
-
-    device = "cuda"
-    dtype = torch.float16
-
-    x = torch.randn((batch_size, seq_len, embed_dim), device=device, dtype=dtype)
-    moe = SoftMoE(
-        embed_dim=embed_dim,
-        num_experts=num_experts,
-        slots_per_expert=slots_per_expert,
-        device=device,
-        dtype=dtype,
-    )
-    linear = nn.Linear(embed_dim, embed_dim, device=device, dtype=dtype)
-    y = moe.forward(x)
-    print(x.shape, y.shape)

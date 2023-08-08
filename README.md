@@ -9,7 +9,7 @@ PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtu
 ### TODO
 
 - [x] Implement Soft MoE layer
-- [ ] Set up unit tests (convert from debug code 😅)
+- [x] Set up unit tests
 - [ ] Example end-to-end Transformer models
     - [ ] language model
     - [ ] vision transformer
