@@ -9,9 +9,9 @@ from torch import Tensor, nn
 
 
 class MultiExpertLayer(nn.Module):
-    """A more efficient alternative to creating 'n' separate expert layers (possibly
+    """A more efficient alternative to creating 'n' separate expert layers (likely
     from 'nn.Linear' modules).  Instead, we create a single set of batched weights
-    and biases, and all 'experts' in parallel.
+    and biases, and apply all 'experts' in parallel.
 
     Args:
         embed_dim (int): embedding dimension (d)
@@ -58,8 +58,20 @@ class MultiExpertLayer(nn.Module):
             nn.init.uniform_(self.bias, -bound, bound)
 
     def forward(self, x: Tensor) -> Tensor:
+        if x.size(-1) != self.embed_dim:
+            raise ValueError(
+                f"Expected input with last dimension {self.embed_dim}, but "
+                f"found {x.size(-1)}"
+            )
+
+        # NOTE: 'd1' and 'd2' are both equal to 'embed_dim'. But for 'einsum' to
+        # work correctly, we have to give them different names.
         x = einsum(x, self.weight, "b n ... d1, n d1 d2 -> b n ... d2")
+
         if self.bias is not None:
+            # NOTE: When used with 'SoftMoE' the inputs to 'MultiExpertLayer' will
+            # always be 4-dimensional.  But it's easy enough to generalize for 3D
+            # inputs as well, so I decided to include that here.
             if x.ndim == 3:
                 bias = rearrange(self.bias, "n d -> () n d")
             elif x.ndim == 4:
@@ -69,6 +81,7 @@ class MultiExpertLayer(nn.Module):
                     f"Expected input to have 3 or 4 dimensions, but got {x.ndim}"
                 )
             x = x + bias
+
         return x
 
     def extra_repr(self) -> str:
@@ -178,6 +191,12 @@ class SoftMoE(nn.Module):
         x = einsum(x, combine_weights, "b n p d, b m n p -> b m d")  # Y
 
         return x
+
+    def extra_repr(self) -> str:
+        return (
+            f"embed_dim={self.embed_dim}, num_experts={self.num_experts}, "
+            f"slots_per_expert={self.slots_per_expert}, bias={self.bias}"
+        )
 
 
 if __name__ == "__main__":
