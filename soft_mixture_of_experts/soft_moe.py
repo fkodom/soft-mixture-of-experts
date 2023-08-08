@@ -194,14 +194,6 @@ if __name__ == "__main__":
     dtype = torch.float16
 
     x = torch.randn((batch_size, seq_len, embed_dim), device=device, dtype=dtype)
-    # phi = torch.randn(
-    #     embed_dim, num_experts, slots_per_expert, device=device, dtype=dtype
-    # )
-    # experts = [
-    #     torch.nn.Linear(embed_dim, embed_dim, device=device, dtype=dtype)
-    #     for _ in range(num_experts)
-    # ]
-    # multi_expert = MultiExpertLayer(embed_dim, num_experts, device=device, dtype=dtype)
     moe = SoftMoE(
         embed_dim=embed_dim,
         num_experts=num_experts,
