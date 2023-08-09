@@ -1,23 +1,28 @@
 # soft-mixture-of-experts
 
-> work in progress
-
 PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtures of Experts](https://arxiv.org/abs/2308.00951.pdf)
 
 <img src="doc/soft-moe-layer.jpeg" alt="soft-moe-layer" width="600"/>
 
+> Thanks to [lucidrains](github.com/lucidrains) for his excellent `x-transformers` library! 🎉
+> 
+> The ViT implementations here are *heavily* based on his [ViTransformerWrapper](https://github.com/lucidrains/x-transformers/blob/7395ebd9bfaea85ef8358e1d46ca176351058017/x_transformers/x_transformers.py#L1215).
+
 ### TODO
 
-- [x] Implement Soft MoE layer
-- [x] Set up unit tests
+- [x] Implement Soft MoE layer (See: [Usage](#softmoe), [soft_moe.py](./soft_mixture_of_experts/soft_moe.py))
+- [ ] Set up unit tests
+    - [x] SoftMoE
+    - [x] Transformer layers
+    - [ ] ViT models
 - [ ] Example end-to-end Transformer models
-    - [x] vision transformer
+    - [x] vision transformer (See: [vit.py](./soft_mixture_of_experts/vit.py))
     - [ ] ~~language model~~
     - [ ] add to README
 - [ ] Reproduce parameter counts from paper (Table 3)
 - [ ] Reproduce benchmarks from paper
-    - [ ] ViT inference time (Tables 1, 2)
-    - [ ] ViT training step time??? (Figure 7)
+    - [ ] inference times (Tables 1, 2)
+    - [ ] training step times??? (Figure 7)
 - [ ] Release on PyPI
     - [ ] Prerelease
     - [ ] Stable
@@ -35,7 +40,7 @@ pip install "soft-mixture-of-experts @ git+ssh://git@github.com/fkodom/soft-mixt
 
 For contributors:
 ```bash
-# Clone/fork this repo
+# Clone/fork this repo. Example:
 gh repo clone fkodom/soft-mixture-of-experts
 cd soft-mixture-of-experts
 # Install all dev dependencies (tests etc.) in editable mode

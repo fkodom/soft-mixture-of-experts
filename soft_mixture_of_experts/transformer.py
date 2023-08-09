@@ -341,30 +341,3 @@ class SoftMoEDecoder(nn.Module):
                 memory_is_causal=memory_is_causal,
             )
         return x
-
-
-if __name__ == "__main__":
-    # TODO: Convert to unit tests
-
-    batch_size = 2
-    seq_len = 32
-    d_model = 512
-    nhead = 8
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    dtype = torch.float32
-
-    encoder_layer = SoftMoEEncoderLayer(
-        d_model=d_model, nhead=nhead, device=device, dtype=dtype
-    )
-    encoder = SoftMoEEncoder(encoder_layer=encoder_layer, num_layers=6)
-    decoder_layer = SoftMoEDecoderLayer(
-        d_model=d_model, nhead=nhead, device=device, dtype=dtype
-    )
-    decoder = SoftMoEDecoder(decoder_layer=decoder_layer, num_layers=6)
-
-    x = torch.randn(batch_size, seq_len, d_model, device=device, dtype=dtype)
-    mem = encoder(x)
-    print(mem.shape)
-    y = decoder(x, mem)
-    print(y.shape)
