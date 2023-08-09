@@ -35,6 +35,7 @@ class SoftMoEEncoderLayer(nn.Module):
         if isinstance(activation, str):
             activation = _get_activation_fn(activation)
 
+        self.d_model = d_model
         self.norm_first = norm_first
         self.activation = activation
 
@@ -176,6 +177,7 @@ class SoftMoEDecoderLayer(nn.Module):
         if isinstance(activation, str):
             activation = _get_activation_fn(activation)
 
+        self.d_model = d_model
         self.norm_first = norm_first
         self.activation = activation
 
