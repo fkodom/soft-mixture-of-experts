@@ -60,7 +60,7 @@ class ViTWrapper(nn.Module):
         else:
             self.out = nn.Identity()
 
-    def forward(self, x: Tensor, return_embeddings: bool = False) -> Tensor:
+    def forward(self, x: Tensor, return_features: bool = False) -> Tensor:
         if not x.size(1) == self.num_channels:
             raise ValueError(
                 f"Expected num_channels={self.num_channels} but found {x.size(1)}"
@@ -81,7 +81,7 @@ class ViTWrapper(nn.Module):
         x = self.dropout(x)
         x = self.encoder(x)
 
-        if return_embeddings:
+        if return_features:
             return x
 
         x = x.mean(dim=-2)
@@ -198,10 +198,10 @@ def _build_soft_moe_vit(
     num_classes: Optional[int],
     image_size: int,
     patch_size: int,
-    num_experts: int,
     d_model: int,
     nhead: int,
     num_encoder_layers: int,
+    num_experts: int,
     slots_per_expert: int = 1,
     mlp_ratio: float = 4.0,
     num_channels: int = 3,

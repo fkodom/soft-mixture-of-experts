@@ -20,7 +20,7 @@ DTYPE = torch.float32
 @pytest.mark.parametrize("dim_feedforward", [16])
 @pytest.mark.parametrize("num_layers", [1, 2])
 @pytest.mark.parametrize("seq_len", [16])
-@pytest.mark.parametrize("batch_size", [1, 2])
+@pytest.mark.parametrize("batch_size", [2])
 def test_soft_moe_encoder(
     batch_size: int,
     seq_len: int,

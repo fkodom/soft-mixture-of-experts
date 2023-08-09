@@ -11,14 +11,14 @@ PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtu
 ### TODO
 
 - [x] Implement Soft MoE layer (See: [Usage](#softmoe), [soft_moe.py](./soft_mixture_of_experts/soft_moe.py))
-- [ ] Set up unit tests
+- [x] Set up unit tests
     - [x] SoftMoE
     - [x] Transformer layers
-    - [ ] ViT models
-- [ ] Example end-to-end Transformer models
+    - [x] ViT models
+- [x] Example end-to-end Transformer models
     - [x] vision transformer (See: [vit.py](./soft_mixture_of_experts/vit.py))
-    - [ ] ~~language model~~
-    - [ ] add to README
+    - [ ] ~~language model~~ (skip for now)
+    - [x] add to README
 - [ ] Reproduce parameter counts from paper (Table 3)
 - [ ] Reproduce benchmarks from paper
     - [ ] inference times (Tables 1, 2)
@@ -52,9 +52,83 @@ pre-commit install
 
 ## Usage
 
-### `SoftMoE`
+### Vision Transformers
 
-As a standalone module:
+Using the `ViT` and `SoftMoEViT` classes directly:
+
+```python
+from soft_mixture_of_experts.vit import ViT, SoftMoEViT
+
+vit = ViT(num_classes=1000, device="cuda")
+moe_vit = SoftMoEViT(num_classes=1000, num_experts=32, device="cuda")
+
+# image shape: (batch_size, channels, height, width)
+image = torch.randn(1, 3, 224, 224, device="cuda")
+
+# classification prediction
+# output shape: (batch_size, num_classes)
+y_vit = vit(image)
+y_moe = moe_vit(image)
+
+# feature embeddings
+# output shape: (batch_size, num_patches, d_model)
+features_vit = vit(image, return_features=True)
+features_moe = moe_vit(image, return_features=True)
+```
+
+or using pre-configured models:
+```python
+from soft_mixture_of_experts.vit import soft_moe_vit_small
+
+# Available models:
+# - soft_moe_vit_small
+# - soft_moe_vit_base
+# - soft_moe_vit_large
+# - vit_small
+# - vit_base
+# - vit_large
+# - vit_huge
+
+# Roughly 930M parameters 👀
+moe_vit = soft_moe_vit_small(num_classes=1000, device="cuda")
+
+# Everything else works the same as above...
+```
+
+
+### Transformer Layers
+
+```python
+from soft_mixture_of_experts.transformer import (
+    TransformerEncoder,
+    TransformerEncoderLayer,
+    TransformerDecoder,
+    TransformerDecoderLayer,
+)
+
+encoder = TransformerEncoder(
+    TransformerEncoderLayer(d_model=512, nhead=8),
+    num_layers=6,
+)
+decoder = TransformerDecoder(
+    TransformerDecoderLayer(d_model=512, nhead=8),
+    num_layers=6,
+)
+
+# input shape: (batch_size, seq_len, d_model)
+x = torch.randn(2, 128, 512, device="cuda")
+
+mem = encoder(x)
+print(mem.shape)
+# torch.Size([2, 128, 512])
+
+y = decoder(x, mem)
+print(y.shape)
+# torch.Size([2, 128, 512])
+```
+
+
+### Soft MoE
 
 ```python
 import torch
@@ -69,8 +143,10 @@ moe = SoftMoE(
     bias=False,  # optional, default: True
     device="cuda",  # optional, default: None
 )
+
 # input shape: (batch_size, seq_len, embed_dim)
 x = torch.randn(2, 128, 512, device="cuda")
+
 y = moe(x)
 print(y.shape)
 # torch.Size([2, 128, 512])
