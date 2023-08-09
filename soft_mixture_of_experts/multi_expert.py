@@ -21,23 +21,27 @@ class MultiExpertLayer(nn.Module):
 
     def __init__(
         self,
-        embed_dim: int,
+        in_features: int,
+        out_features: int,
         num_experts: int,
         bias: bool = True,
         device: Optional[Union[torch.device, str]] = None,
         dtype: Optional[torch.dtype] = None,
     ):
         super().__init__()
-        self.embed_dim = embed_dim
+        self.in_features = in_features
+        self.out_features = out_features
         self.num_experts = num_experts
 
         self.weight = nn.Parameter(
-            torch.empty((num_experts, embed_dim, embed_dim), device=device, dtype=dtype)
+            torch.empty(
+                (num_experts, in_features, out_features), device=device, dtype=dtype
+            )
         )
         bias_param: Optional[nn.Parameter] = None
         if bias:
             bias_param = nn.Parameter(
-                torch.empty((num_experts, embed_dim), device=device, dtype=dtype)
+                torch.empty((num_experts, out_features), device=device, dtype=dtype)
             )
         # Include type annotation for mypy :D
         self.bias: Optional[nn.Parameter]
@@ -58,9 +62,9 @@ class MultiExpertLayer(nn.Module):
             nn.init.uniform_(self.bias, -bound, bound)
 
     def forward(self, x: Tensor) -> Tensor:
-        if x.size(-1) != self.embed_dim:
+        if x.size(-1) != self.in_features:
             raise ValueError(
-                f"Expected input with embed_dim={self.embed_dim} (dim=-1), but "
+                f"Expected input with embed_dim={self.in_features} (dim=-1), but "
                 f"found {x.size(-1)}"
             )
         elif x.size(1) != self.num_experts:
@@ -91,6 +95,6 @@ class MultiExpertLayer(nn.Module):
 
     def extra_repr(self) -> str:
         return (
-            f"embed_dim={self.embed_dim}, num_experts={self.num_experts}, "
-            f"bias={self.bias is not None}"
+            f"in_features={self.in_features}, out_features={self.out_features}, "
+            f"num_experts={self.num_experts}, bias={self.bias is not None}"
         )

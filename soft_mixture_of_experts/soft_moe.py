@@ -32,7 +32,8 @@ class SoftMoE(nn.Module):
 
     def __init__(
         self,
-        embed_dim: int,
+        in_features: int,
+        out_features: int,
         num_experts: int,
         slots_per_expert: int,
         bias: bool = True,
@@ -40,20 +41,22 @@ class SoftMoE(nn.Module):
         dtype: Optional[torch.dtype] = None,
     ):
         super().__init__()
-        self.embed_dim = embed_dim
+        self.in_features = in_features
+        self.out_features = out_features
         self.num_experts = num_experts
         self.slots_per_expert = slots_per_expert
         self.bias = bias
 
         self.phi = nn.Parameter(
             torch.empty(
-                (embed_dim, num_experts, slots_per_expert),
+                (in_features, num_experts, slots_per_expert),
                 device=device,
                 dtype=dtype,
             )
         )
         self.experts = MultiExpertLayer(
-            embed_dim=embed_dim,
+            in_features=in_features,
+            out_features=out_features,
             num_experts=num_experts,
             bias=bias,
             device=device,
@@ -86,9 +89,9 @@ class SoftMoE(nn.Module):
         Returns:
             Tensor: output tensor of shape (b, m, d)
         """
-        if x.size(-1) != self.embed_dim:
+        if x.size(-1) != self.in_features:
             raise ValueError(
-                f"Expected x.size(-1)={x.size(-1)} to match embed_dim={self.embed_dim}, "
+                f"Expected x.size(-1)={x.size(-1)} to match embed_dim={self.in_features}, "
                 f"but got {x.size(-1)}."
             )
         elif x.ndim != 3:
@@ -116,6 +119,7 @@ class SoftMoE(nn.Module):
 
     def extra_repr(self) -> str:
         return (
-            f"embed_dim={self.embed_dim}, num_experts={self.num_experts}, "
-            f"slots_per_expert={self.slots_per_expert}, bias={self.bias}"
+            f"in_features={self.in_features}, out_features={self.out_features}, "
+            f"num_experts={self.num_experts}, slots_per_expert={self.slots_per_expert}, "
+            f"bias={self.bias}"
         )

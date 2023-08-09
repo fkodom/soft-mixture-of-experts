@@ -47,6 +47,8 @@ pre-commit install
 
 ### `SoftMoE`
 
+As a standalone module:
+
 ```python
 import torch
 

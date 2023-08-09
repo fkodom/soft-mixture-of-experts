@@ -7,14 +7,16 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.float32
 
 
-@pytest.mark.parametrize("embed_dim", [8])
+@pytest.mark.parametrize("in_features", [8])
+@pytest.mark.parametrize("out_features", [4])
 @pytest.mark.parametrize("num_experts", [1, 4])
 @pytest.mark.parametrize("slots_per_expert", [1, 2])
 @pytest.mark.parametrize("bias", [True, False])
 @pytest.mark.parametrize("batch_size", [1, 2])
 @pytest.mark.parametrize("seq_len", [16])
 def test_soft_moe(
-    embed_dim: int,
+    in_features: int,
+    out_features: int,
     num_experts: int,
     slots_per_expert: int,
     bias: bool,
@@ -22,7 +24,8 @@ def test_soft_moe(
     seq_len: int,
 ):
     experts = SoftMoE(
-        embed_dim=embed_dim,
+        in_features=in_features,
+        out_features=out_features,
         num_experts=num_experts,
         slots_per_expert=slots_per_expert,
         bias=bias,
@@ -30,7 +33,7 @@ def test_soft_moe(
         dtype=DTYPE,
     )
     x = torch.randn(
-        (batch_size, seq_len, embed_dim),
+        (batch_size, seq_len, in_features),
         device=DEVICE,
         dtype=DTYPE,
         requires_grad=True,
@@ -38,8 +41,9 @@ def test_soft_moe(
 
     # Check that forward pass works
     y = experts.forward(x)
-    assert y.shape == x.shape
-    assert y.requires_grad
+    assert y.size(0) == x.size(0)
+    assert y.size(1) == x.size(1)
+    assert y.size(2) == out_features
 
     # Check that gradients are propagated
     y.sum().backward()
@@ -50,14 +54,15 @@ def test_soft_moe(
 
 def test_soft_moe_exceptions():
     experts = SoftMoE(
-        embed_dim=8,
+        in_features=8,
+        out_features=4,
         num_experts=4,
         slots_per_expert=2,
         device=DEVICE,
         dtype=DTYPE,
     )
 
-    # Test wrong embedding dimension
+    # Test wrong input dimension
     x = torch.randn((1, 4, 16), device=DEVICE, dtype=DTYPE)
     with pytest.raises(ValueError):
         experts.forward(x)
