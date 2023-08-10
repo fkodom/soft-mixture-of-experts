@@ -19,10 +19,10 @@ PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtu
     - [x] SoftMoE
     - [x] Transformer layers
     - [x] ViT models
-- [ ] Reproduce parameter counts from Table 3
-- [ ] Reproduce inference benchmarks from Tables 1, 2
+- [x] Reproduce parameter counts from Table 3 ([Ablations](#ablations))
+- [x] Reproduce inference benchmarks from Tables 1, 2 ([Ablations](#ablations))
 - [ ] Release on PyPI
-    - [ ] Prerelease
+    - [x] Prerelease
     - [ ] Stable
 
 
@@ -149,6 +149,33 @@ y = moe(x)
 print(y.shape)
 # torch.Size([2, 128, 512])
 ```
+
+
+## Ablations
+
+I closely reproduce the parameter counts and (relative) inference times from the paper.
+
+### Table 3
+
+All models are benchmarked with:
+```python
+batch_size = 8  # see note below
+image_size = 224
+num_channels = 3
+num_classes = 21000  # as in ImageNet 21k
+```
+
+> $\dagger$ The authors benchmark "eval ms/img" using TPUv3, and I use single A100 40GB.  The authors also are not clear on the batch size used for inference.  In Figure 6, they specifically mention using batch size 8. So, I assume a batch size of 8, and observe that inference times are similar to what is reported in the paper.
+
+| Model | Params | Params <br> (paper) | Eval ms/img $\dagger$ | Eval ms/img <br> (paper) |
+| --- | --- | --- | --- | --- |
+| ViT S/16 | 30 M | 33 M | 0.9 | 0.5 |
+| Soft MoE S/16 128E | 932 M | 933 M | 1.3 | 0.7 |
+| Soft MoE S/14 128E | 1.8 B | 1.8 B | 1.5 | 0.9 |
+| ViT B/16 | 102 M | 108 M | 1.0 | 0.9 |
+| Soft MoE B/16 128E | 3.7 B | 3.7 B | 1.5 | 1.5 |
+| ViT L/16 | 325 M | 333 M | 1.8 | 4.9 |
+| Soft MoE L/16 128E | 13.1 B | 13.1 B | 3.5 | 4.8 |
 
 
 ## Test
