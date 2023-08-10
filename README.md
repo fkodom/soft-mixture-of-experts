@@ -21,15 +21,17 @@ PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtu
     - [x] ViT models
 - [x] Reproduce parameter counts from Table 3 ([Ablations](#ablations))
 - [x] Reproduce inference benchmarks from Tables 1, 2 ([Ablations](#ablations))
-- [ ] Release on PyPI
+- [x] Release on PyPI
     - [x] Prerelease
-    - [ ] Stable
+    - [x] Stable
 
 
 ## Install
 
 PyPI:
-> work in progress
+```bash
+pip install soft-mixture-of-experts
+```
 
 From source:
 ```bash
