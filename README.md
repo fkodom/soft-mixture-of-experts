@@ -10,19 +10,17 @@ PyTorch implementation of Soft MoE by Google Brain in [From Sparse to Soft Mixtu
 
 ### TODO
 
-- [x] Implement Soft MoE layer (See: [Usage](#softmoe), [soft_moe.py](./soft_mixture_of_experts/soft_moe.py))
+- [x] Implement Soft MoE layer ([Usage](#softmoe), [Code](./soft_mixture_of_experts/soft_moe.py))
+- [x] Example end-to-end Transformer models
+    - [x] vision transformer ([Usage](#vision-transformers), [Code](./soft_mixture_of_experts/vit.py))
+    - [ ] ~~language model~~ (skip for now)
+    - [x] add to README
 - [x] Set up unit tests
     - [x] SoftMoE
     - [x] Transformer layers
     - [x] ViT models
-- [x] Example end-to-end Transformer models
-    - [x] vision transformer (See: [vit.py](./soft_mixture_of_experts/vit.py))
-    - [ ] ~~language model~~ (skip for now)
-    - [x] add to README
-- [ ] Reproduce parameter counts from paper (Table 3)
-- [ ] Reproduce benchmarks from paper
-    - [ ] inference times (Tables 1, 2)
-    - [ ] training step times??? (Figure 7)
+- [ ] Reproduce parameter counts from Table 3
+- [ ] Reproduce inference benchmarks from Tables 1, 2
 - [ ] Release on PyPI
     - [ ] Prerelease
     - [ ] Stable
