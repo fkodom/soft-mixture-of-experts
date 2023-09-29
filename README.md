@@ -137,7 +137,8 @@ from soft_mixture_of_experts.soft_moe import SoftMoE
 
 # SoftMoE with 32 experts, 2 slots per expert (64 total):
 moe = SoftMoE(
-    embed_dim=512,
+    in_features=512,
+    out_features=512,
     num_experts=32,
     slots_per_expert=2,
     bias=False,  # optional, default: True
