@@ -98,7 +98,7 @@ class SoftMoE(nn.Module):
             raise ValueError(f"Expected input to have 3 dimensions, but got {x.ndim}.")
 
         logits = einsum(x, self.phi, "b m d, d n p -> b m n p")
-        dispatch_weights = logits.softmax(dim=0)  # denoted 'D' in the paper
+        dispatch_weights = logits.softmax(dim=1)  # denoted 'D' in the paper
         # NOTE: The 'torch.softmax' function does not support multiple values for the
         # 'dim' argument (unlike jax), so we are forced to flatten the last two dimensions.
         # Then, we rearrange the Tensor into its original shape.
